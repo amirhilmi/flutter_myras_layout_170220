@@ -4,39 +4,100 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/foundation.dart';
 
 class HeroHeader extends SliverPersistentHeaderDelegate {
+
+  final double expandedHeight;
+  final bool hideTitleWhenExpanded;
+
   HeroHeader({
-    this.layoutGroup,
-    this.onLayoutToggle,
-    this.minExtent,
-    this.maxExtent,
+        @required this.expandedHeight,
+        this.hideTitleWhenExpanded = true,
   });
-  final LayoutGroup layoutGroup;
-  final VoidCallback onLayoutToggle;
-  double maxExtent;
-  double minExtent;
+  
+  // final LayoutGroup layoutGroup;
+  // final VoidCallback onLayoutToggle;
+  // double maxExtent;
+  // double minExtent;
 
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
 
+    final appBarSize = expandedHeight - shrinkOffset;
+    // final cardTopPosition = expandedHeight / 2 - shrinkOffset;
+    final proportion = 2 - (expandedHeight / appBarSize);
+    final percent = proportion < 0 || proportion > 1 ? 0.0 : proportion;
 
 
-return new Stack(
-      children: <Widget>[
-        // The containers in the background
-        new Column(
-          children: <Widget>[
-            new Container(
-              height: MediaQuery.of(context).size.height * .30,
-              decoration: BoxDecoration(
-                border: null,
-                gradient: LinearGradient(
-                  colors: [
+        return SizedBox(
+          height: expandedHeight + expandedHeight / 2,
+          child: Stack(
+            children: [
+              SizedBox(
+                height: appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize,
+                
+                child: AppBar(
+                  centerTitle: true,
+                  // backgroundColor: Colors.green,
+
+
+
+                  leading: IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () {},
+                  ),
+                  elevation: 0.0,
+                  title: Opacity(
+                      opacity: hideTitleWhenExpanded ? 1.0 - percent : 1.0,
+                      child: Text("MyMasjid")),
+
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+             border: null,
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: <Color>[
                     Colors.deepPurple,
                     Colors.purple,
-                  ],
+            ])          
+         ),        
+     )
+
                 ),
+
+
+
               ),
+
+
+
+ new Stack(
+      children: <Widget>[
+        // The containers in the background
+
+ 
+
+        new Column(
+          children: <Widget>[
+
+
+                   
+
+
+             new Container(
+              height: MediaQuery.of(context).size.height * .30,
+              
+              // decoration: BoxDecoration(
+              //   border: null,
+              //   gradient: LinearGradient(
+              //     colors: [
+              //       Colors.deepPurple,
+              //       Colors.purple,
+              //     ],
+              //   ),
+              // ),
+
+
               child: Center(
                 child: Text(
                   ' MyMasjid \nAhmad Kazim',
@@ -61,7 +122,7 @@ return new Stack(
         // incase if you wanted bottom padding to work,
         // set the `alignment` of container to Alignment.bottomCenter
 
-        new Container(
+       new Container(
           alignment: Alignment.topCenter,
           padding: new EdgeInsets.only(
               top: MediaQuery.of(context).size.height * .20,
@@ -276,8 +337,16 @@ return new Stack(
 
        
 
+
       ],
-    );
+    ),
+
+
+            ],
+          ),
+        ); 
+
+
 
 
 
@@ -285,13 +354,16 @@ return new Stack(
 
   }
 
-  @override
-  bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
-    return true;
-  }
+      @override
+      double get maxExtent => expandedHeight + expandedHeight / 2;
 
-  @override
-  FloatingHeaderSnapConfiguration get snapConfiguration => null;
+      @override
+      double get minExtent => kToolbarHeight;
+
+      @override
+      bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+        return true;
+      }
 }
 
 class HeroPage extends StatelessWidget implements HasLayoutGroup {
@@ -325,10 +397,10 @@ class HeroPage extends StatelessWidget implements HasLayoutGroup {
           SliverPersistentHeader(
             pinned: true,
             delegate: HeroHeader(
-              layoutGroup: layoutGroup,
-              onLayoutToggle: onLayoutToggle,
-              minExtent: 90.0, //size of transformation
-              maxExtent: 250.0,
+              expandedHeight: 200,
+
+              // minExtent: 90.0, //size of transformation
+              // maxExtent: 250.0,
             ),
           ),
           SliverGrid(
@@ -356,6 +428,9 @@ class HeroPage extends StatelessWidget implements HasLayoutGroup {
     );
   }
 
+
+ 
+
   EdgeInsets _edgeInsetsForIndex(int index) {
     if (index % 2 == 0) {
       return EdgeInsets.only(top: 4.0, left: 8.0, right: 4.0, bottom: 4.0);
@@ -364,3 +439,74 @@ class HeroPage extends StatelessWidget implements HasLayoutGroup {
     }
   }
 }
+
+
+
+    class CustomSliverDelegate extends SliverPersistentHeaderDelegate {
+      final double expandedHeight;
+      final bool hideTitleWhenExpanded;
+
+      CustomSliverDelegate({
+        @required this.expandedHeight,
+        this.hideTitleWhenExpanded = true,
+      });
+
+      @override
+      Widget build(
+          BuildContext context, double shrinkOffset, bool overlapsContent) {
+        final appBarSize = expandedHeight - shrinkOffset;
+        final cardTopPosition = expandedHeight / 2 - shrinkOffset;
+        final proportion = 2 - (expandedHeight / appBarSize);
+        final percent = proportion < 0 || proportion > 1 ? 0.0 : proportion;
+        return SizedBox(
+          height: expandedHeight + expandedHeight / 2,
+          child: Stack(
+            children: [
+              SizedBox(
+                height: appBarSize < kToolbarHeight ? kToolbarHeight : appBarSize,
+                child: AppBar(
+                  backgroundColor: Colors.green,
+                  leading: IconButton(
+                    icon: Icon(Icons.menu),
+                    onPressed: () {},
+                  ),
+                  elevation: 0.0,
+                  title: Opacity(
+                      opacity: hideTitleWhenExpanded ? 1.0 - percent : 1.0,
+                      child: Text("Test")),
+                ),
+              ),
+              Positioned(
+                left: 0.0,
+                right: 0.0,
+                top: cardTopPosition > 0 ? cardTopPosition : 0,
+                bottom: 0.0,
+                child: Opacity(
+                  opacity: percent,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 30 * percent),
+                    child: Card(
+                      elevation: 20.0,
+                      child: Center(
+                        child: Text("Header"),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
+
+      @override
+      double get maxExtent => expandedHeight + expandedHeight / 2;
+
+      @override
+      double get minExtent => kToolbarHeight;
+
+      @override
+      bool shouldRebuild(SliverPersistentHeaderDelegate oldDelegate) {
+        return true;
+      }
+    }
